@@ -1,0 +1,35 @@
+version: '3.8'
+
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: mysql-container
+    environment:
+      MYSQL_ROOT_PASSWORD: S@07!#s@07!#  # Set the root password here
+      MYSQL_DATABASE: agri  # The default database to create
+
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      retries: 5
+      start_period: 30s
+      timeout: 20s
+
+  springboot:
+    build: .
+    container_name: springboot-container
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/agri
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: S@07!#s@07!#
+      SPRING_DATASOURCE_DRIVER-CLASS-NAME: com.mysql.cj.jdbc.Driver
+      SPRING_JPA_HIBERNATE_DDL-AUTO: update
+      SPRING_JPA_SHOW-SQL: "true"
+      SPRING_JPA_PROPERTIES_HIBERNATE_FORMAT-SQL: "true"
+    ports:
+      - "8087:8080"
+    depends_on:
+      mysql:
+        condition: service_healthy
+
+
